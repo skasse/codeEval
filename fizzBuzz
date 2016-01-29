@@ -1,0 +1,30 @@
+import sys
+
+f = open(sys.argv[1], 'r')
+l = f.readline()
+while l:
+    l = l.split(' ')
+    x = int(l[0])
+    y = int(l[1])
+    n = int(l[2])
+    c = 1
+    output = []
+    while n > 0:
+        if c % x == 0:
+            if c % y == 0:
+                output.append('FB')
+            else:
+                output.append('F')
+        elif c % y == 0:
+            output.append('B')
+        else:
+            output.append(str(c))
+        n -= 1
+        c += 1
+
+    output = ' '.join(output)
+    sys.stdout.write('{}\n'.format(output))
+    l = f.readline()
+
+
+f.close()
