@@ -1,0 +1,14 @@
+import sys
+f = open(sys.argv[1], 'r')
+l = f.readline()
+while l:
+    l = l.split(",")
+    x = int(l[0])
+    y = yBase = int(l[1])
+    while y < x:
+        y += yBase
+    print y
+    l = f.readline()
+
+
+f.close()
