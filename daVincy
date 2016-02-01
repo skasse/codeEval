@@ -1,0 +1,44 @@
+'''
+Da Vyncy Code
+https://www.codeeval.com/browse/77/
+'''
+
+#combine all overlapping test_cases
+#if a[i] == b[x]; check if a[i:-1] == b[x: len(a[i:-1]
+#if a[i] == b[0] then a[i+len(b)] must == b[-1]
+#merge a[:i] and b[x:-1]
+f = open('sampleInput', 'r')
+input = f.readline().split(";")
+#input = ['iquam quaerat voluptatem.', 'pora incidunt ut labore et d', ', consectetur, adipisci velit', 'olore magnam aliqua', 'idunt ut labore et dolore magn', 'uptatem.', 'i dolorem ipsum qu', 'psum quia dolor sit amet, consectetur, a', 'ia dolor sit amet, conse', 'squam est, qui do', 'Neque porro quisquam est, qu', 'm eius modi tem', 'Neque porro qui', ', sed quia non numquam ei', 'lorem ipsum quia dolor sit amet', 'ctetur, adipisci velit, sed quia non numq', 'unt ut labore et dolore magnam aliquam qu', 'dipisci velit, sed quia non numqua', 'us modi tempora incid', 'Neque porro quisquam est, qui dolorem i', 'uam eius modi tem', 'pora inc', 'am al']
+
+
+while len(input) > 1:
+    input_index = 0
+    matches = {}
+
+    for each in input[1:]:
+        input_index += 1
+        if input[0].find(each[0]) > 0:
+            fragment_index = 1
+            while each[0:fragment_index] in input[0] and fragment_index <= len(each):
+                fragment_index += 1
+            overlap_index = input[0].index(each[:fragment_index-1])
+            matches[fragment_index-1] = [each,input_index,overlap_index]
+
+        elif input[0].find(each[-1]) > 0:
+            fragment_index = 1
+            while each[-fragment_index:] in input[0] and fragment_index <= len(each):
+                fragment_index += 1
+            overlap_index = input[0].find(each[:fragment_index-1])
+            matches[fragment_index-1] = [each, input_index, overlap_index-1]
+
+    bestMatchIndex = matches[max(matches.keys())]
+    print 'best match index is ',bestMatchIndex
+    if bestMatchIndex[2] >= 0:
+        input[0] = input[0].replace(input[0], '{}{}'.format(input[0][:bestMatchIndex[2]],bestMatchIndex[0]))
+    if bestMatchIndex[2] < 0:
+        input[0] = input[0].replace(input[0], '{}{}'.format(bestMatchIndex[0],input[0][-bestMatchIndex[2]:]))
+    del(input[bestMatchIndex[1]])
+    print input,'\n'
+
+print input[0]
