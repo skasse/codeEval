@@ -7,38 +7,51 @@ https://www.codeeval.com/browse/77/
 #if a[i] == b[x]; check if a[i:-1] == b[x: len(a[i:-1]
 #if a[i] == b[0] then a[i+len(b)] must == b[-1]
 #merge a[:i] and b[x:-1]
-f = open('sampleInput', 'r')
-input = f.readline().split(";")
-#input = ['iquam quaerat voluptatem.', 'pora incidunt ut labore et d', ', consectetur, adipisci velit', 'olore magnam aliqua', 'idunt ut labore et dolore magn', 'uptatem.', 'i dolorem ipsum qu', 'psum quia dolor sit amet, consectetur, a', 'ia dolor sit amet, conse', 'squam est, qui do', 'Neque porro quisquam est, qu', 'm eius modi tem', 'Neque porro qui', ', sed quia non numquam ei', 'lorem ipsum quia dolor sit amet', 'ctetur, adipisci velit, sed quia non numq', 'unt ut labore et dolore magnam aliquam qu', 'dipisci velit, sed quia non numqua', 'us modi tempora incid', 'Neque porro quisquam est, qui dolorem i', 'uam eius modi tem', 'pora inc', 'am al']
+#f = open('sampleInput', 'r')
+#input = f.readline()
+input = [' Bank of Zurich, wh(ich Sopd erased prior to\\ Lan<gdon$\'s ar/rival. Sop%hie i]s troubled b%y memories& of# hers gr>andfathath#er,\'s involveme\\"nt i<n a> sec,ret )pagan gr\\"oup. However, s*he understands t-hat her( gra1ndfa{ther` inten<ded L#\'an-~gdon% to decipher th>=e code, w!hic#h s?he an_d L>ang_don rea.lize l~ead=s them to, a s(afe) b.ox at :t\'he Paris branch', ',\\" wh^$ich s$he says Fa$che ', ' Paris branch of @t>he Depository ', 'wh(ich Sop-hie an@d Lan\\gd!on', ' Lan\\gd!on go t.o after\\"']
 
 
+
+#while input:
+#    input = input.strip("\n").split(";")
 while len(input) > 1:
     input_index = 0
     matches = {}
 
     for each in input[1:]:
+        # check for best match from string start:
         input_index += 1
         if input[0].find(each[0]) > 0:
             fragment_index = 1
-            while each[0:fragment_index] in input[0] and fragment_index <= len(each):
+            while each[:fragment_index] in input[0] and fragment_index <= len(each):
                 fragment_index += 1
             overlap_index = input[0].index(each[:fragment_index-1])
-            matches[fragment_index-1] = [each,input_index,overlap_index]
+            print each[:fragment_index-1]
+            matches[fragment_index] = [each, input_index, overlap_index, fragment_index-1]
+        # check for best match from string end:
+        if input[0].find(each[-1]) > 0:
+            fragment_index = -1
+            while each[fragment_index:] in input[0] and -fragment_index <= len(each):
+                fragment_index -= 1
+            fragment_index + 1
+            overlap_index = input[0].find(each[fragment_index:])
+            print each[fragment_index:]
+            matches[-fragment_index] = [each, input_index, overlap_index, fragment_index]
 
-        elif input[0].find(each[-1]) > 0:
-            fragment_index = 1
-            while each[-fragment_index:] in input[0] and fragment_index <= len(each):
-                fragment_index += 1
-            overlap_index = input[0].find(each[:fragment_index-1])
-            matches[fragment_index-1] = [each, input_index, overlap_index-1]
+    bestMatch = matches[max(matches.keys())]
+    print 'best match for "{}" is "{}" with {} overlap'.format(input[0],bestMatch[0], max(matches.keys()))
+    #check if string is in middle of current string and if so, ignore it
+    while  bestMatch[0] not in input[0]:
+        # output for string start match
+        if bestMatch[3] >= 0 and len(input[0])-bestMatch[2] <= bestMatch[3]:
+            input[0] = input[0].replace(input[0], '{}{}'.format(input[0][:bestMatch[2]],bestMatch[0]))
+        # output for string end match
+        elif bestMatch[3] < 0:
+            input[0] = input[0].replace(input[0], '{}{}'.format(bestMatch[0],input[0][-bestMatch[3]:]))
+        # remove best match from input list
+        del(input[bestMatch[1]])
+    print input, '\n'
 
-    bestMatchIndex = matches[max(matches.keys())]
-    print 'best match index is ',bestMatchIndex
-    if bestMatchIndex[2] >= 0:
-        input[0] = input[0].replace(input[0], '{}{}'.format(input[0][:bestMatchIndex[2]],bestMatchIndex[0]))
-    if bestMatchIndex[2] < 0:
-        input[0] = input[0].replace(input[0], '{}{}'.format(bestMatchIndex[0],input[0][-bestMatchIndex[2]:]))
-    del(input[bestMatchIndex[1]])
-    print input,'\n'
-
-print input[0]
+#    print input[0]
+#    input = f.readline()
